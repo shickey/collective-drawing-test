@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Collective Drawing Test</title>
+</head>
+<link rel="stylesheet" type="text/css" href="./main.css">
+<body>
+  
+  <canvas id="editor" width="600" height="300"></canvas>
+  <div>
+    <button id="discard" disabled>Discard drawing</button>
+    <button id="send" disabled>Send to Collective Canvas!</button>
+  </div>
+  
+  <canvas id="viewer" width="600" height="300"></canvas>
+
+<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-database.js"></script>
+<script type="text/javascript">
+  var firebaseConfig = {
+    apiKey: "AIzaSyB4nLoF-aHqD40q4F38kvjpeMDQLcW3Jmg",
+    authDomain: "collective-drawing.firebaseapp.com",
+    databaseURL: "https://collective-drawing.firebaseio.com",
+    projectId: "collective-drawing",
+    storageBucket: "collective-drawing.appspot.com",
+    messagingSenderId: "1042991619432",
+    appId: "1:1042991619432:web:eedf58171e2d48b81c4add"
+  };
+  firebase.initializeApp(firebaseConfig);
+  var db = firebase.database();
+  var drawingsRef = db.ref('drawings');
+  
+  const CANVAS_WIDTH = 600;
+  const CANVAS_HEIGHT = 300;
+</script>
+<script type="text/javascript" src="./editor.js"></script>
+<script type="text/javascript" src="./viewer.js"></script>
+</body>
+</html>
