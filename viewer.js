@@ -3,16 +3,77 @@
 let canvas = document.getElementById('viewer');
 let ctx = canvas.getContext('2d');
 
+let offscreen = document.createElement('canvas');
+offscreen.width = '600';
+offscreen.height = '300';
+let offscreenCtx = offscreen.getContext('2d');
+
+let thumbnails = document.getElementById('thumbnails');
+
+function createThumbnailFromDrawing(drawing) {
+  offscreenCtx.clearRect(0, 0, 600, 300);
+  offscreenCtx.fillStyle = drawing.backgroundColor;
+  offscreenCtx.strokeStyle = drawing.penColor;
+  
+  offscreenCtx.fillRect(0, 0, 600, 300);
+  
+  offscreenCtx.beginPath();
+  drawing.points.forEach((pt, idx) => {
+    if (idx === 0) {
+      offscreenCtx.moveTo(pt.x, pt.y);
+    }
+    else {
+      offscreenCtx.lineTo(pt.x, pt.y);
+    }
+  });
+  offscreenCtx.stroke();
+  
+  let thumbData = offscreen.toDataURL();
+  
+  let thumb = document.createElement('div');
+  thumb.dataset.id = drawing.id;
+  thumb.classList.add('thumbnail');
+  let img = document.createElement('img');
+  img.src = thumbData;
+  thumb.appendChild(img);
+  thumbnails.appendChild(thumb);
+}
+
 var drawings = [];
 var nextDrawingsQueue = [];
-drawingsRef.on('child_added', function(data) {
-  // We always want to see "our" drawing asap,
-  // so we queue drawings to show up as they come
-  // in over the wire. Once they've been seen once,
-  // we put them in the `drawings` array to be randomly
-  // chosen later if the queue is empty
-  nextDrawingsQueue.push(data.val());
-});
+
+drawingsRef.once('value', function(snapshot) {
+  let lastKey = undefined;
+  snapshot.forEach(function(childSnapshot) {
+    lastKey = childSnapshot.key;
+    let drawing = childSnapshot.val();
+    drawing.id = childSnapshot.key;
+    createThumbnailFromDrawing(drawing);
+    
+    // Push these directly to the drawings array
+    // so that we don't queue up *all* the drawings
+    // each time we reload
+    drawings.push(drawing);
+  });
+  
+  drawingsRef.on('child_added', function(data) {
+    // Skip stuff we've already seen
+    if (data.key <= lastKey) {
+      return;
+    }
+    
+    // We always want to see "our" drawing asap,
+    // so we queue drawings to show up as they come
+    // in over the wire. Once they've been seen once,
+    // we put them in the `drawings` array to be randomly
+    // chosen later if the queue is empty
+    let drawing = data.val();
+    drawing.id = data.key;
+    createThumbnailFromDrawing(drawing);
+    nextDrawingsQueue.push(drawing);
+  });
+})
+
 
 ctx.lineWidth = 2.0;
 ctx.lineCap = 'round';

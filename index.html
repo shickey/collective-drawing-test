@@ -13,8 +13,12 @@
   </div>
   
   <canvas id="viewer" width="600" height="300"></canvas>
+  <div id="thumbnails">
+    
+  </div>
 
 <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-analytics.js"></script>
 <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase-database.js"></script>
 <script type="text/javascript">
   var firebaseConfig = {
@@ -24,9 +28,11 @@
     projectId: "collective-drawing",
     storageBucket: "collective-drawing.appspot.com",
     messagingSenderId: "1042991619432",
-    appId: "1:1042991619432:web:eedf58171e2d48b81c4add"
+    appId: "1:1042991619432:web:eedf58171e2d48b81c4add",
+    measurementId: "G-7W0DCN4BYC"
   };
   firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
   var db = firebase.database();
   var drawingsRef = db.ref('drawings');
   
