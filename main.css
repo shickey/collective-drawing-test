@@ -6,7 +6,7 @@ body {
 canvas {
   display: inline-block;
   border: 2px solid #999;
-  background-color: #fff;
+  background-color: #000;
 }
 
 #editor {
